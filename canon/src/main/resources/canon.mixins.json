@@ -1,0 +1,20 @@
+{
+  "required": true,
+  "package": "at.gkgo.canon.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "ExampleMixin",
+    "ItemMixin",
+    "LifecycledResourceManagerImplMixin",
+    "PotionMixin",
+    "PotionsMixin",
+    "ResourceManagerHelperImplMixin",
+    "WoodTypeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "MinecraftClientMixin"
+  ]
+}

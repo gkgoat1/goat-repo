@@ -1,0 +1,48 @@
+{
+	"schemaVersion": 1,
+	"id": "canon",
+	"version": "${version}",
+	"name": "canon",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/canon/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"at.gkgo.canon.Canon"
+		],
+		"fabric-datagen": [
+			"at.gkgo.canon.CanonDataGenerator"
+		],
+		"canon:material/before_first": [
+			"at.gkgo.canon.CanonBeforeFirst"
+		],
+		"cardinal-components": [
+			"at.gkgo.canon.CanonComponents"
+		]
+	},
+	"mixins": [
+		"canon.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.3",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	},
+	"custom": {
+		"cardinal-components": [
+
+		]
+	}
+}
