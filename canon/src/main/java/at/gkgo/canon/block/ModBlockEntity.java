@@ -24,6 +24,9 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
+
 public class ModBlockEntity<Self extends ModBlockEntity<Self,B,I>, B extends ModBlockWithEntity<B,Self,I>, I extends ModBlockItem<B,I>> extends BlockEntity implements ScreenHandlerFactory {
     public ModBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -68,7 +71,7 @@ public class ModBlockEntity<Self extends ModBlockEntity<Self,B,I>, B extends Mod
             lock.writeNbt(nbt);
         }
     }
-
+    public boolean storage_lock = false;
     public <T> Storage<T> getStorage(BlockApiLookup<Storage<T>, Direction> x, Direction y, Class<T> k){
         return null;
     }
@@ -80,7 +83,15 @@ public class ModBlockEntity<Self extends ModBlockEntity<Self,B,I>, B extends Mod
     static <T>void initStorage(BlockApiLookup<Storage<T>, Direction> x,Class<T> k){
         x.registerFallback((w,p,s,be,d) -> {
             if(be instanceof ModBlockEntity<?,?,?> b){
-                return b.getStorage(x,d,k);
+                if(b.storage_lock){
+                    return Storage.empty();
+                }
+                b.storage_lock = true;
+                try {
+                    return b.getStorage(x, d, k);
+                }finally {
+                    b.storage_lock = false;
+                }
             }
             return null;
         });
@@ -89,13 +100,21 @@ public class ModBlockEntity<Self extends ModBlockEntity<Self,B,I>, B extends Mod
     public static <T> void initPropag(Propagation<T> p){
         p.lookup().registerFallback((w,po,s,be,d) -> {
             if(be instanceof ModBlockEntity<?,?,?> b){
-                return b.getPropag(p,d);
+                if(b.storage_lock){
+                    return p.combine(List.of());
+                }
+                b.storage_lock = true;
+                try {
+                    return b.getPropag(p, d);
+                }finally {
+                    b.storage_lock = false;
+                }
             }
             return null;
         });
     }
 
-    void tick(Random random){
+    public void tick(Random random){
 
     }
 

@@ -42,7 +42,8 @@
 	},
 	"custom": {
 		"cardinal-components": [
-
+			"canon:id",
+			"canon:block_nbt"
 		]
 	}
 }
