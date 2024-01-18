@@ -1,5 +1,6 @@
 package at.gkgo.canon.blocknbt;
 
+import at.gkgo.canon.Canon;
 import at.gkgo.canon.util.CodecUtils;
 import com.mojang.serialization.Codec;
 import dev.onyxstudios.cca.api.v3.component.Component;
@@ -8,6 +9,8 @@ import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +18,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class BNComponent implements Component , AutoSyncedComponent {
     public static NbtCompound get(World w, BlockPos pos){
@@ -45,12 +50,12 @@ public class BNComponent implements Component , AutoSyncedComponent {
         this.owner = owner;
     }
     private void clean(NbtCompound x){
-        if(x.getCompound("$").equals(new NbtCompound())){
-            x.remove("$");
+        if(x.getCompound(Canon.META).equals(new NbtCompound())){
+            x.remove(Canon.META);
         }
     }
-    private void clean(){
-        for(var k: map.keySet()){
+    private synchronized void clean(){
+        for(var k: new HashSet<>(map.keySet())){
             clean(map.get(k));
             if(Objects.equals(new NbtCompound(),map.get(k))){
                 map.remove(k);
@@ -62,6 +67,28 @@ public class BNComponent implements Component , AutoSyncedComponent {
         KEY.sync(owner);
         owner.setNeedsSaving(true);
     }
+
+    @Override
+    public void writeSyncPacket(PacketByteBuf buf, ServerPlayerEntity recipient) {
+//        AutoSyncedComponent.super.writeSyncPacket(buf, recipient);
+        for(var e: map.entrySet()){
+            buf.writeBoolean(true);
+            buf.writeBlockPos(e.getKey());
+            buf.writeNbt(e.getValue());
+        }
+        buf.writeBoolean(false);
+    }
+
+    @Override
+    public void applySyncPacket(PacketByteBuf buf) {
+//        AutoSyncedComponent.super.applySyncPacket(buf);
+        while(buf.readBoolean()){
+            var p = buf.readBlockPos();
+            map.put(p,buf.readNbt());
+        }
+    }
+
+
     @Override
     public void readFromNbt(NbtCompound tag) {
         map = CODEC.decode(NbtOps.INSTANCE,tag).result().get().getFirst();

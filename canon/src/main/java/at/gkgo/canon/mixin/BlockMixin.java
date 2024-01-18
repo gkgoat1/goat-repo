@@ -3,7 +3,8 @@ package at.gkgo.canon.mixin;
 import at.gkgo.canon.Canon;
 import at.gkgo.canon.blocknbt.BNComponent;
 import at.gkgo.canon.guard.GuardHandler;
-import at.gkgo.canon.meta.item.MetaItem;
+import at.gkgo.canon.meta.MetaItem;
+import at.gkgo.canon.util.TransientStatics;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.serialization.Codec;
@@ -41,10 +42,14 @@ public class BlockMixin implements MetaItem {
 
     @ModifyReturnValue(at = @At("RETURN"), method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;)Ljava/util/List;")
     private static List<ItemStack> canon$tweakDroppedStacksForMeta(List<ItemStack> original, @Local BlockState state, @Local ServerWorld world, @Local BlockPos pos){
-        if(!BNComponent.get(world, pos).getCompound(Canon.META).equals(new NbtCompound())) {
+        var cm = TransientStatics.transient_interaction_compound;
+        if(cm == null){
+            cm = BNComponent.get(world,pos);
+        }
+        if(!cm.getCompound(Canon.META).equals(new NbtCompound())) {
             for (var stack : original) {
                 if (stack.getItem() == state.getBlock().asItem()) {
-                    stack.getOrCreateNbt().put(Canon.META, BNComponent.get(world, pos).getCompound(Canon.META));
+                    stack.getOrCreateNbt().put(Canon.META, cm.getCompound(Canon.META));
                 }
             }
         }

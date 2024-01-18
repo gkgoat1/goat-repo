@@ -15,7 +15,9 @@ public class ChunkMixin {
         m.setX(m.getX() & 15);
         m.setZ(m.getZ() & 15);
         var c = BNComponent.KEY.get(this);
-        c.map.put(m.toImmutable(),new NbtCompound());
+        synchronized (c) {
+            c.map.put(m.toImmutable(), new NbtCompound());
+        }
         c.sync();
     }
 }

@@ -5,8 +5,14 @@
   "mixins": [
     "BlockItemMixin",
     "BlockMixin",
+    "BucketItemMixin",
     "ChunkMixin",
+    "EmptyBucketStorageMixin",
     "ExampleMixin",
+    "FlowableFluidMixin",
+    "FluidBlockMixin",
+    "FluidMixin",
+    "FullItemFluidStorageMixin",
     "ItemMixin",
     "ItemStackMixin",
     "LifecycledResourceManagerImplMixin",
@@ -14,6 +20,7 @@
     "PotionsMixin",
     "ProtoChunkMixin",
     "ResourceManagerHelperImplMixin",
+    "ServerPlayerInteractionManagerMixin",
     "WoodTypeMixin",
     "WorldChunkMixin"
   ],

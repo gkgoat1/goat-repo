@@ -1,4 +1,4 @@
-package at.gkgo.canon.meta.item;
+package at.gkgo.canon.meta;
 
 import com.mojang.serialization.Codec;
 
