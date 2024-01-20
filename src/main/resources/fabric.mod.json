@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "goat-repo",
+  "version": "${version}",
+  "name": "goat-repo",
+  "description": "DO NOT USE",
+  "authors": [
+    "Me!"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.3",
+    "minecraft": "~1.20.4",
+    "java": ">=17",
+    "fabric-api": "*",
+    "canon": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
