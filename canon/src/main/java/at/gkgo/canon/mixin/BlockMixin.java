@@ -17,6 +17,7 @@ import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,6 +41,20 @@ public class BlockMixin implements MetaItem {
         }
     }
 
+    @ModifyReturnValue(at = @At("RETURN"), method = "getPickStack")
+    private ItemStack canon$injectPicks(ItemStack stack, @Local WorldView w, @Local BlockPos pos){
+        if(w instanceof World world){
+                var cm = BNComponent.get(world,pos);
+            if(!cm.getCompound(Canon.META).equals(new NbtCompound())) {
+//                for (var stack : original) {
+//                    if (stack.getItem() == state.getBlock().asItem()) {
+                        stack.getOrCreateNbt().put(Canon.META, cm.getCompound(Canon.META));
+//                    }
+//                }
+            }
+        }
+        return stack;
+    }
     @ModifyReturnValue(at = @At("RETURN"), method = "getDroppedStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;)Ljava/util/List;")
     private static List<ItemStack> canon$tweakDroppedStacksForMeta(List<ItemStack> original, @Local BlockState state, @Local ServerWorld world, @Local BlockPos pos){
         var cm = TransientStatics.transient_interaction_compound;
