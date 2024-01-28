@@ -17,10 +17,13 @@ package at.gkgo.canon.potion;
  */
 
 
-import net.minecraft.potion.Potion;
+import at.gkgo.canon.Canon;
+import at.gkgo.canon.meta.MetaItem;
+import at.gkgo.canon.meta.MetaVariant;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.potion.PotionUtil;
@@ -50,7 +53,7 @@ public class FluidPotionStorage implements ExtractionOnlyStorage<FluidVariant>, 
     private static boolean isWaterPotion(ContainerItemContext context) {
         ItemVariant variant = context.getItemVariant();
 
-        return variant.isOf(Items.POTION) && ((PotionAsFluid)(Object)PotionUtil.getPotion(variant.getNbt())).canon$asFluid() != null;
+        return variant.isOf(Items.POTION) && PotionUtil.getPotion(variant.toStack()) != Potions.WATER;
     }
 
     private final ContainerItemContext context;
@@ -76,10 +79,10 @@ public class FluidPotionStorage implements ExtractionOnlyStorage<FluidVariant>, 
         // Not a water potion anymore
         if (!isWaterPotion()) return 0;
 
-        var fl = ((PotionAsFluid)(Object)PotionUtil.getPotion(context.getItemVariant().getNbt())).canon$asFluid();
+//        var fl = ((PotionAsFluid)(Object)PotionUtil.getPotion(context.getItemVariant().getNbt())).canon$asFluid();
         var bottle = mapToGlassBottle();
         // Make sure that the fluid and the amount match.
-        if (resource.equals(FluidVariant.of(fl,bottle.getNbt())) && maxAmount >= CONTAINED_AMOUNT) {
+        if (resource.equals(getResource()) && maxAmount >= CONTAINED_AMOUNT) {
             if (context.exchange(bottle, 1, transaction) == 1) {
                 // Conversion ok!
                 return CONTAINED_AMOUNT;
@@ -98,9 +101,15 @@ public class FluidPotionStorage implements ExtractionOnlyStorage<FluidVariant>, 
     public FluidVariant getResource() {
         // Only contains a resource if this is still a water potion.
         if (isWaterPotion()) {
-            var fl = ((PotionAsFluid)(Object)PotionUtil.getPotion(context.getItemVariant().getNbt())).canon$asFluid();
+//            var fl = ((PotionAsFluid)(Object)PotionUtil.getPotion(context.getItemVariant().getNbt())).canon$asFluid();
             var bottle = mapToGlassBottle();
-            return FluidVariant.of(fl,bottle.getNbt());
+            var n = new NbtCompound();
+            var p = PotionUtil.getPotion(context.getItemVariant().getNbt());
+            n.put(Canon.META,PotionFluids.CODEC.encodeStart(NbtOps.INSTANCE,new MetaVariant<>(
+                    p,
+                    ((MetaItem)p).canon$meta().codec.decode(NbtOps.INSTANCE,context.getItemVariant().copyOrCreateNbt().getCompound("PotionNbt"))
+            )).result().get());
+            return FluidVariant.of(PotionFluids.POTION,n);
         } else {
             return FluidVariant.blank();
         }

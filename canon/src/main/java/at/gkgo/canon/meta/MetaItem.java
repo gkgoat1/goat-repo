@@ -3,5 +3,7 @@ package at.gkgo.canon.meta;
 import com.mojang.serialization.Codec;
 
 public interface MetaItem {
-    Codec<?> canon$meta();
+    default Meta<?> canon$meta(){
+        return Meta.defaultMeta(this);
+    }
 }

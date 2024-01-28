@@ -21,7 +21,9 @@ package at.gkgo.canon.potion;
 import java.util.Iterator;
 import java.util.List;
 
+import at.gkgo.canon.meta.MetaItem;
 import at.gkgo.canon.potion.PotionAsFluid;
+import at.gkgo.canon.util.TypeUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -36,6 +38,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.BlankVariantView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.InsertionOnlyStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.mixin.transfer.BucketItemAccessor;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.registry.Registries;
 
@@ -56,16 +59,19 @@ public class EmptyPotionStorage implements InsertionOnlyStorage<FluidVariant> {
 
         if (!context.getItemVariant().isOf(Items.BUCKET)) return 0;
 
-        for(var e: Registries.POTION){
-            if(((PotionAsFluid)(Object)e).canon$asFluid() == resource.getFluid()){
-                ItemStack newStack = Items.GLASS_BOTTLE.getDefaultStack();
-                newStack.setNbt(resource.getNbt());
-                PotionUtil.setPotion(newStack, e);
-                var newVariant =  ItemVariant.of(Items.POTION, newStack.getNbt());
-                if (context.exchange(newVariant, 1, transaction) == 1) {
-                    return FluidConstants.BOTTLE;
-                }
-            }
+        if(!resource.isOf(PotionFluids.POTION))return 0;
+        var c = PotionFluids.CODEC.decode(NbtOps.INSTANCE,resource.copyOrCreateNbt()).get().orThrow().getFirst();
+//        for(var e: Registries.POTION){
+//            if(((PotionAsFluid)(Object)e).canon$asFluid() == resource.getFluid()){
+//            }
+//        }
+        ItemStack newStack = Items.GLASS_BOTTLE.getDefaultStack();
+//        newStack.setNbt(resource.getNbt());
+        PotionUtil.setPotion(newStack, c.value);
+        newStack.getOrCreateNbt().put("PotionNbt",((MetaItem)c.value).canon$meta().codec.encodeStart(NbtOps.INSTANCE,TypeUtils.unsafeCoerce(c.meta)).result().get());
+        var newVariant =  ItemVariant.of(Items.POTION, newStack.getNbt());
+        if (context.exchange(newVariant, 1, transaction) == 1) {
+            return FluidConstants.BOTTLE;
         }
 
         return 0;

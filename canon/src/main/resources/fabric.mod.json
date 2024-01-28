@@ -24,6 +24,9 @@
 		"canon:material/before_first": [
 			"at.gkgo.canon.CanonBeforeFirst"
 		],
+		"canon:meta/before_first": [
+			"at.gkgo.canon.CanonBeforeFirst"
+		],
 		"cardinal-components": [
 			"at.gkgo.canon.CanonComponents"
 		]

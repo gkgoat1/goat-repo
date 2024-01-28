@@ -1,10 +1,11 @@
 package at.gkgo.canon.material;
 
+import at.gkgo.canon.meta.MetaItem;
 import net.minecraft.util.Identifier;
 
 import java.util.Set;
 
-public interface Form<T> {
+public interface Form<T> extends MetaItem {
     Identifier getId();
     default MatTagKey<T> key(){
         return MatTagKey.of(getId());

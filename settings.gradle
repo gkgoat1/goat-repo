@@ -11,3 +11,4 @@ pluginManagement {
 include 'canon'
 include 'thingamajiggy'
 include 'nucleus'
+include 'wurmhole'

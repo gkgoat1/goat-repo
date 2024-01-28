@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class WorldChunkMixin extends ChunkMixin{
     @Inject(at = @At("RETURN"), method = "setBlockState")
     void canon$resetNbt(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir){
-        canon$resetNbtCore(pos);
+        canon$resetNbtCore(pos,state);
     }
     @Inject(at = @At("HEAD"), method = "setBlockState", cancellable = true)
     void canon$guard(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir){

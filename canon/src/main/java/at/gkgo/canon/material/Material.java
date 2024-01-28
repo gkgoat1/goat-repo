@@ -1,5 +1,7 @@
 package at.gkgo.canon.material;
 
+import at.gkgo.canon.meta.Meta;
+import at.gkgo.canon.meta.MetaItem;
 import at.gkgo.canon.util.Mangler;
 import net.minecraft.util.Identifier;
 
@@ -7,11 +9,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class Material {
+public class Material implements MetaItem {
+    @Override
+    public Meta<?> canon$meta() {
+        return handler.meta(this);
+    }
+
     public final Map<Identifier,RegisterResult<?>> all = new HashMap<>();
     public final Identifier id;
     public final int rarity;
     public final Handler handler;
+//    public final Meta<?> meta;
     public static final Handler NULL_HANDLER = new Handler() {
 
         @Override

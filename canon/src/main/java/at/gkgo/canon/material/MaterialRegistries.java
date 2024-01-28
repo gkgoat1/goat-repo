@@ -76,7 +76,7 @@ public class MaterialRegistries {
         didTriggerPreMaterialEntrypoint = true;
         var entries = FabricLoader.getInstance().getEntrypoints("canon:material/before_first", BeforeFirstMaterialEntrypoint.class);
         for(var e: entries){
-            e.run();
+            e.runBeforeMaterials();
         }
     }
     public static Codec<Item> MATERIAL_ITEM  = by_material_form(ItemConvertible.class).xmap(ItemConvertible::asItem,(a) -> a);

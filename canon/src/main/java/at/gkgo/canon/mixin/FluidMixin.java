@@ -8,8 +8,5 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Fluid.class)
 public class FluidMixin implements MetaItem {
-    @Override
-    public Codec<?> canon$meta() {
-        return Codec.unit(Unit.INSTANCE);
-    }
+
 }

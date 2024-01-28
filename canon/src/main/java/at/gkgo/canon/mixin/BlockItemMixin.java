@@ -2,6 +2,7 @@ package at.gkgo.canon.mixin;
 
 import at.gkgo.canon.Canon;
 import at.gkgo.canon.blocknbt.BNComponent;
+import at.gkgo.canon.meta.Meta;
 import at.gkgo.canon.meta.MetaItem;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +25,7 @@ public class BlockItemMixin implements MetaItem {
     }
 
     @Override
-    public Codec<?> canon$meta() {
+    public Meta<?> canon$meta() {
         return ((MetaItem) ((BlockItem)(Object)this).getBlock()).canon$meta();
     }
 }

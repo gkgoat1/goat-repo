@@ -15,11 +15,13 @@ public class ModIDBlockEntity <Self extends ModIDBlockEntity<Self,B,I>, B extend
     }
     public UUID id = UUID.randomUUID();
     public static ModIDBlockEntity<?,?,?> get(MinecraftServer srv, UUID id){
-        var l = IDComponent.KEY.get(srv).all.get(id);
+        var l = IDComponent.KEY.get(srv.getSaveProperties().getMainWorldProperties()).all.get(id);
         return (ModIDBlockEntity<?, ?, ?>) srv.getWorld(l.world).getBlockEntity(l.pos);
     }
 private void update(){
-    IDComponent.KEY.get(world.getServer()).all.put(id,new Loc(world.getRegistryKey(),getPos()));
+        if(!hasWorld())return;
+        if(getWorld().isClient)return;
+    IDComponent.KEY.get(world.getServer().getSaveProperties().getMainWorldProperties()).all.put(id,new Loc(world.getRegistryKey(),getPos()));
 }
 
     @Override

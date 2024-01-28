@@ -3,6 +3,7 @@
   "package": "at.gkgo.canon.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractBlockMixin",
     "BlockItemMixin",
     "BlockMixin",
     "BucketItemMixin",

@@ -17,6 +17,6 @@ import java.util.Objects;
 public class ProtoChunkMixin extends ChunkMixin{
     @Inject(at = @At("RETURN"), method = "setBlockState")
     void canon$resetNbt(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir){
-        canon$resetNbtCore(pos);
+        canon$resetNbtCore(pos,state);
     }
 }

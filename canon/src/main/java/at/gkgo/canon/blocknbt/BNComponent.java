@@ -1,7 +1,11 @@
 package at.gkgo.canon.blocknbt;
 
 import at.gkgo.canon.Canon;
+import at.gkgo.canon.meta.BlockInitPatch;
+import at.gkgo.canon.meta.Meta;
+import at.gkgo.canon.meta.MetaItem;
 import at.gkgo.canon.util.CodecUtils;
+import at.gkgo.canon.util.TypeUtils;
 import com.mojang.serialization.Codec;
 import dev.onyxstudios.cca.api.v3.component.Component;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
@@ -16,6 +20,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,14 +54,23 @@ public class BNComponent implements Component , AutoSyncedComponent {
     public BNComponent(Chunk owner) {
         this.owner = owner;
     }
-    private void clean(NbtCompound x){
-        if(x.getCompound(Canon.META).equals(new NbtCompound())){
+    public <T> T fixup(Meta<T> m,T a,BlockPos p){
+        if(owner instanceof WorldChunk wc){
+            var b = m.behavior.patch(TypeUtils.unsafeCoerce(a),BlockInitPatch.KEY,new BlockInitPatch(wc.getWorld(),wc.getPos().getBlockPos(p.getX(),p.getY(),p.getZ()),wc.getBlockState(p)));
+            a = TypeUtils.unsafeCoerce(b);
+        }
+        return a;
+    }
+    private void clean(NbtCompound x,BlockPos p){
+        var m = ((MetaItem)owner.getBlockState(p).getBlock()).canon$meta();
+        var mm = m.defaultNbt((a) -> TypeUtils.unsafeCoerce(fixup(TypeUtils.unsafeCoerce(m),a,p)));
+        if(x.getCompound(Canon.META).equals(mm)){
             x.remove(Canon.META);
         }
     }
     private synchronized void clean(){
         for(var k: new HashSet<>(map.keySet())){
-            clean(map.get(k));
+            clean(map.get(k),k);
             if(Objects.equals(new NbtCompound(),map.get(k))){
                 map.remove(k);
             }

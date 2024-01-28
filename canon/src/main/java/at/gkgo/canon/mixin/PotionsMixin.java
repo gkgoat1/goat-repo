@@ -17,13 +17,13 @@ import java.util.Objects;
 public class PotionsMixin {
     @Inject(at = @At("RETURN"), method = "register(Ljava/lang/String;Lnet/minecraft/potion/Potion;)Lnet/minecraft/potion/Potion;")
     private static void canon$addVanillaPotionFluids(String name, Potion potion, CallbackInfoReturnable<Potion> cir){
-        PotionAsFluid fluid = (PotionAsFluid) (Object)potion;
-        if(fluid.canon$asFluid() == null){
-            if(!Objects.equals(name, "water")) {
-                fluid.canon$internalSetFluid(SimpleFluid.register(Identifier.of("minecraft", name)).getStill());
-            }else{
-                fluid.canon$internalSetFluid(Fluids.WATER);
-            }
-        }
+//        PotionAsFluid fluid = (PotionAsFluid) (Object)potion;
+//        if(fluid.canon$asFluid() == null){
+//            if(!Objects.equals(name, "water")) {
+//                fluid.canon$internalSetFluid(SimpleFluid.register(Identifier.of("minecraft", name)).getStill());
+//            }else{
+//                fluid.canon$internalSetFluid(Fluids.WATER);
+//            }
+//        }
     }
 }

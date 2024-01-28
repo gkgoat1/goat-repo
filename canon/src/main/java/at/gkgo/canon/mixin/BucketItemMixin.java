@@ -2,6 +2,7 @@ package at.gkgo.canon.mixin;
 
 import at.gkgo.canon.Canon;
 import at.gkgo.canon.blocknbt.BNComponent;
+import at.gkgo.canon.meta.Meta;
 import at.gkgo.canon.meta.MetaItem;
 import com.mojang.serialization.Codec;
 import net.minecraft.entity.player.PlayerEntity;
@@ -26,7 +27,7 @@ public class BucketItemMixin implements MetaItem {
     @Final
     @Shadow private Fluid fluid;
     @Override
-    public Codec<?> canon$meta() {
+    public Meta<?> canon$meta() {
         return ((MetaItem)(fluid)).canon$meta();
     }
     @Unique private ItemStack transient_stack = ItemStack.EMPTY;

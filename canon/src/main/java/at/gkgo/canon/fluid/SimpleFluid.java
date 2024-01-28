@@ -1,5 +1,7 @@
 package at.gkgo.canon.fluid;
 
+import at.gkgo.canon.meta.Meta;
+import at.gkgo.canon.meta.MetaItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.BlockState;
@@ -16,19 +18,30 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 
-public abstract class SimpleFluid extends TutorialFluid implements ItemConvertible {
+import java.util.function.Function;
+
+public abstract class SimpleFluid extends TutorialFluid implements ItemConvertible, MetaItem {
     @Override
     public Item asItem() {
         return getBucketItem();
     }
 
     final Identifier id;
-    SimpleFluid(Identifier x){
+    final Function<Meta<?>,Meta<?>> meta;
+    SimpleFluid(Identifier x, Function<Meta<?>,Meta<?>> meta){
         id = x;
+        this.meta = meta;
     }
-    public static Still register(Identifier i){
-        var s = Registry.register(Registries.FLUID,i,new Still(i));
-        Registry.register(Registries.FLUID,new Identifier(i.toString() + "/flowing"),new Flowing(i));
+
+    @Override
+    public Meta<?> canon$meta() {
+        return meta.apply(MetaItem.super.canon$meta());
+    }
+
+    public static Still register(Identifier i,Meta<?> a){
+        Function<Meta<?>,Meta<?>> m = (b) -> b.with(a);
+        var s = Registry.register(Registries.FLUID,i,new Still(i,m));
+        Registry.register(Registries.FLUID,new Identifier(i.toString() + "/flowing"),new Flowing(i,m));
         Registry.register(Registries.ITEM,new Identifier(i.toString() + "_bucket"), (Item)new BucketItem(s, new FabricItemSettings()));
         Registry.register(Registries.BLOCK, i, new FluidBlock(s, FabricBlockSettings.copy(Blocks.WATER)){});
         return s;
@@ -55,8 +68,8 @@ public abstract class SimpleFluid extends TutorialFluid implements ItemConvertib
     }
 
     public static class Flowing extends SimpleFluid {
-        Flowing(Identifier x) {
-            super(x);
+        Flowing(Identifier x, Function<Meta<?>,Meta<?>> meta) {
+            super(x, meta);
         }
 
         @Override
@@ -77,8 +90,8 @@ public abstract class SimpleFluid extends TutorialFluid implements ItemConvertib
     }
 
     public static class Still extends SimpleFluid {
-        Still(Identifier x) {
-            super(x);
+        Still(Identifier x,Function<Meta<?>,Meta<?>> meta) {
+            super(x, meta);
         }
 
         @Override

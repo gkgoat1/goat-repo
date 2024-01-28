@@ -71,8 +71,5 @@ public class BlockMixin implements MetaItem {
         return original;
     }
 
-    @Override
-    public Codec<?> canon$meta() {
-        return Codec.unit(Unit.INSTANCE);
-    }
+
 }
